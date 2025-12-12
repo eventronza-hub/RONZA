@@ -1,21 +1,40 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, Loader2 } from 'lucide-react';
+import { Send, Bot, User, Loader2, Trash2 } from 'lucide-react';
 import { getGeminiAdvice } from '../geminiService';
 import { ChatMessage } from '../types';
 
+const STORAGE_KEY = 'ronza_event_ai_chat';
+
 const AIAdvisor: React.FC = () => {
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'model', text: 'يا هلا فيك مع مستشار رونزا الذكي! تبين تعرفين أحدث صيحات أعراس ٢٠٢٥ في الكويت؟ قوليلي شنو ببالج وراح أساعدج باللي تبين تبارك الرحمن.' }
-  ]);
+  const defaultMessage: ChatMessage = { 
+    role: 'model', 
+    text: 'يا هلا فيك مع مستشار رونزا الذكي! تبين تعرفين أحدث صيحات أعراس ٢٠٢٥ في الكويت؟ قوليلي شنو ببالج وراح أساعدج باللي تبين تبارك الرحمن.' 
+  };
+
+  const [messages, setMessages] = useState<ChatMessage[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return saved ? JSON.parse(saved) : [defaultMessage];
+    } catch (e) {
+      return [defaultMessage];
+    }
+  });
+  
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // Auto-scroll to bottom on new messages
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
+  }, [messages]);
+
+  // Save to localStorage whenever messages change
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
   }, [messages]);
 
   const handleSend = async () => {
@@ -23,12 +42,20 @@ const AIAdvisor: React.FC = () => {
 
     const userMsg = input.trim();
     setInput('');
-    setMessages(prev => [...prev, { role: 'user', text: userMsg }]);
+    const newMessages: ChatMessage[] = [...messages, { role: 'user', text: userMsg }];
+    setMessages(newMessages);
     setIsLoading(true);
 
     const advice = await getGeminiAdvice(userMsg);
-    setMessages(prev => [...prev, { role: 'model', text: advice }]);
+    setMessages([...newMessages, { role: 'model', text: advice }]);
     setIsLoading(false);
+  };
+
+  const clearChat = () => {
+    if (window.confirm('هل ترغبين في مسح تاريخ المحادثة؟')) {
+      setMessages([defaultMessage]);
+      localStorage.removeItem(STORAGE_KEY);
+    }
   };
 
   return (
@@ -55,6 +82,15 @@ const AIAdvisor: React.FC = () => {
                 <p className="text-xs text-white/80">متصل الآن - رونزا إيفنت</p>
               </div>
             </div>
+            
+            <button 
+              onClick={clearChat}
+              className="p-2 hover:bg-white/10 rounded-lg transition-colors flex items-center gap-2 text-xs font-medium"
+              title="مسح المحادثة"
+            >
+              <Trash2 size={16} />
+              <span className="hidden sm:inline">مسح المحادثة</span>
+            </button>
           </div>
 
           {/* Chat area */}
@@ -73,7 +109,7 @@ const AIAdvisor: React.FC = () => {
             ))}
             {isLoading && (
               <div className="flex justify-end">
-                <div className="bg-[#FFF0F5] p-4 rounded-2xl shadow-sm flex items-center gap-2">
+                <div className="bg-[#FFF0F5] p-4 rounded-2xl shadow-sm flex items-center gap-2 border border-[#D4AF37]/10">
                   <Loader2 className="animate-spin text-[#D4AF37]" size={20} />
                   <span className="text-sm text-gray-500">جاري كتابة النصيحة...</span>
                 </div>
@@ -86,7 +122,7 @@ const AIAdvisor: React.FC = () => {
             <button 
               onClick={handleSend}
               disabled={isLoading || !input.trim()}
-              className="w-12 h-12 bg-[#D4AF37] hover:bg-[#B8860B] disabled:bg-gray-300 text-white rounded-xl flex items-center justify-center transition-colors shadow-lg"
+              className="w-12 h-12 bg-[#D4AF37] hover:bg-[#B8860B] disabled:bg-gray-300 text-white rounded-xl flex items-center justify-center transition-colors shadow-lg shrink-0"
             >
               <Send size={20} className="rotate-180" />
             </button>
