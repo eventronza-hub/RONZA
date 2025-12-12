@@ -1,9 +1,15 @@
 
 import React from 'react';
-import { SERVICES } from '../constants';
+import { SERVICES, getRotatedWhatsAppNumber } from '../constants';
 import { ExternalLink } from 'lucide-react';
 
 const Services: React.FC = () => {
+  const handleOfferClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const rotatedNumber = getRotatedWhatsAppNumber();
+    window.open(`https://wa.me/965${rotatedNumber}?text=استفسار عن العرض الحصري`, '_blank');
+  };
+
   return (
     <section id="services" className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -46,7 +52,12 @@ const Services: React.FC = () => {
         <div className="mt-20 bg-gradient-to-r from-[#FFF0F5] to-[#FFE4E1] p-10 rounded-3xl border-2 border-dashed border-[#D4AF37]/20">
           <p className="text-[#B8860B] font-bold text-xl mb-4">عرض حصري لمتابعي الموقع!</p>
           <p className="text-gray-700 mb-6">خصم 15% على باقة "التصوير + الدي جي" عند الحجز المبكر لشهر رمضان 2025.</p>
-          <a href={`https://wa.me/96551321125`} className="inline-block bg-[#D4AF37] text-white px-8 py-3 rounded-full font-bold shadow-lg hover:shadow-xl transition-all">استفد من العرض</a>
+          <button 
+            onClick={handleOfferClick}
+            className="inline-block bg-[#D4AF37] text-white px-8 py-3 rounded-full font-bold shadow-lg hover:shadow-xl transition-all"
+          >
+            استفد من العرض
+          </button>
         </div>
       </div>
     </section>

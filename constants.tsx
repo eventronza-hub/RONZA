@@ -16,6 +16,20 @@ export const CONTACT_NUMBERS = {
   dj: '51117500',
 };
 
+// Helper to get a rotated WhatsApp number to balance leads
+export const getRotatedWhatsAppNumber = (): string => {
+  const numbers = [CONTACT_NUMBERS.kosha, CONTACT_NUMBERS.photography, CONTACT_NUMBERS.dj];
+  try {
+    const lastIndex = localStorage.getItem('wa_rotation_index');
+    const nextIndex = lastIndex ? (parseInt(lastIndex) + 1) % numbers.length : 0;
+    localStorage.setItem('wa_rotation_index', nextIndex.toString());
+    return numbers[nextIndex];
+  } catch (e) {
+    // Fallback if localStorage is disabled
+    return numbers[Math.floor(Math.random() * numbers.length)];
+  }
+};
+
 export const SERVICES: Service[] = [
   {
     id: 'kosha',

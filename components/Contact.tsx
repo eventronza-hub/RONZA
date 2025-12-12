@@ -1,9 +1,15 @@
 
 import React from 'react';
 import { MapPin, Phone, MessageCircle, Clock } from 'lucide-react';
-import { ADDRESS, CONTACT_NUMBERS } from '../constants';
+import { ADDRESS, CONTACT_NUMBERS, getRotatedWhatsAppNumber } from '../constants';
 
 const Contact: React.FC = () => {
+  const handleSmartRotationClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const rotatedNumber = getRotatedWhatsAppNumber();
+    window.open(`https://wa.me/965${rotatedNumber}?text=يا هلا، حاب استفسر عن خدماتكم`, '_blank');
+  };
+
   return (
     <section id="contact" className="py-24 bg-[#FFF9FA]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -28,11 +34,20 @@ const Contact: React.FC = () => {
                   <Phone size={24} />
                 </div>
                 <div>
-                  <h4 className="font-bold text-gray-800 mb-1 text-lg">أرقام التواصل</h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 mt-2">
-                    <p className="text-gray-600">الكوش: {CONTACT_NUMBERS.kosha}</p>
-                    <p className="text-gray-600">التصوير: {CONTACT_NUMBERS.photography}</p>
-                    <p className="text-gray-600">الدي جي: {CONTACT_NUMBERS.dj}</p>
+                  <h4 className="font-bold text-gray-800 mb-1 text-lg">أرقام التواصل المباشر</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 mt-2">
+                    <a href={`https://wa.me/965${CONTACT_NUMBERS.kosha}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-gray-600 hover:text-[#D4AF37] transition-colors">
+                      <MessageCircle size={16} className="text-[#25D366]" />
+                      <span>الكوش: {CONTACT_NUMBERS.kosha}</span>
+                    </a>
+                    <a href={`https://wa.me/965${CONTACT_NUMBERS.photography}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-gray-600 hover:text-[#D4AF37] transition-colors">
+                      <MessageCircle size={16} className="text-[#25D366]" />
+                      <span>التصوير: {CONTACT_NUMBERS.photography}</span>
+                    </a>
+                    <a href={`https://wa.me/965${CONTACT_NUMBERS.dj}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-gray-600 hover:text-[#D4AF37] transition-colors">
+                      <MessageCircle size={16} className="text-[#25D366]" />
+                      <span>الدي جي: {CONTACT_NUMBERS.dj}</span>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -48,14 +63,15 @@ const Contact: React.FC = () => {
               </div>
             </div>
 
-            <div className="mt-12 flex gap-4">
-              <a 
-                href={`https://wa.me/965${CONTACT_NUMBERS.kosha}`} 
-                className="flex items-center gap-2 bg-[#25D366] text-white px-8 py-4 rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all"
+            <div className="mt-12 flex flex-col sm:flex-row gap-4">
+              <button 
+                onClick={handleSmartRotationClick}
+                className="flex items-center justify-center gap-2 bg-[#25D366] text-white px-8 py-4 rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all"
               >
                 <MessageCircle size={22} />
-                تحدثي معنا واتساب
-              </a>
+                استشارة فورية (تدوير ذكي)
+              </button>
+              <p className="text-xs text-gray-400 self-center sm:max-w-[200px] text-center sm:text-right">سيتم تحويلك تلقائياً لأحد ممثلينا لخدمتك بشكل أسرع.</p>
             </div>
           </div>
 
