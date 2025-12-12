@@ -1,0 +1,7 @@
+{
+  "name": "Ronza Event - Wedding Excellence",
+  "description": "A luxury wedding and event planning landing page for Ronza Event in Kuwait, featuring AI-powered 2025 trends consultant and premium service showcases.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
