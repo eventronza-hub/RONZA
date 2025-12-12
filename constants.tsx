@@ -16,16 +16,23 @@ export const CONTACT_NUMBERS = {
   dj: '51117500',
 };
 
-// Helper to get a rotated WhatsApp number to balance leads
+/**
+ * وظيفة التدوير الذكي:
+ * تقوم بجلب الرقم التالي في كل مرة يتم فيها استدعاؤها لضمان توزيع الاستفسارات
+ * بشكل عادل بين أقسام الكوش، التصوير، والدي جي.
+ */
 export const getRotatedWhatsAppNumber = (): string => {
   const numbers = [CONTACT_NUMBERS.kosha, CONTACT_NUMBERS.photography, CONTACT_NUMBERS.dj];
   try {
-    const lastIndex = localStorage.getItem('wa_rotation_index');
-    const nextIndex = lastIndex ? (parseInt(lastIndex) + 1) % numbers.length : 0;
+    const lastIndexStr = localStorage.getItem('wa_rotation_index');
+    // تصحيح: التحقق من وجود القيمة بدقة لأن 0 يعتبر false في JS
+    const currentIndex = lastIndexStr !== null ? parseInt(lastIndexStr) : -1;
+    const nextIndex = (currentIndex + 1) % numbers.length;
+    
     localStorage.setItem('wa_rotation_index', nextIndex.toString());
     return numbers[nextIndex];
   } catch (e) {
-    // Fallback if localStorage is disabled
+    // في حال تعطل التخزين المحلي، نختار رقم عشوائي كبديل
     return numbers[Math.floor(Math.random() * numbers.length)];
   }
 };
